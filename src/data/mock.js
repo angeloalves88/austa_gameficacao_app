@@ -5,6 +5,7 @@ export const userData = {
   level: 'Nível Ouro',
   scoreToNext: 50,
   nextLevel: 'Nível Diamante',
+  luckyNumbers: 5, // 6 meses, 1 errado = 5 números da sorte para sorteios
 }
 
 export const activityFeed = [
