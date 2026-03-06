@@ -141,3 +141,68 @@ O projeto já inclui `vercel.json` com as regras de rewrite para SPA. Se o probl
 
 - A URL padrão da Vercel permanece a mesma (ex: `score-saude.vercel.app`)
 - Cada deploy gera uma URL de preview, mas a de produção segue igual
+
+---
+
+## Deploy em VPS com Docker + Traefik (Portainer)
+
+Se você tem uma VPS com Portainer e Traefik, use o `docker-compose.yml` incluído no projeto.
+
+### Pré-requisitos
+
+- Docker e Portainer na VPS
+- Traefik rodando em container (geralmente na rede `traefik`)
+- Domínio ou subdomínio configurado (ou IP da VPS)
+
+### Passo 1: Configurar o domínio
+
+Crie um arquivo `.env` na raiz do projeto:
+
+```
+APP_DOMAIN=score-saude.seudominio.com
+```
+
+Para teste local, use `localhost`.
+
+### Passo 2: Subir pelo Portainer
+
+**Opção A – Build a partir do Git (recomendado):**
+
+1. No Portainer, vá em **Stacks** → **Add stack**
+2. Nome: `score-saude`
+3. Selecione **Build from repository**
+4. Repositório: `https://github.com/angeloalves88/austa_gameficacao_app` (ou seu fork)
+5. Compose path: `docker-compose.yml`
+6. **Environment variables**: adicione `APP_DOMAIN` = `score-saude.seudominio.com`
+7. Clique em **Deploy the stack**
+
+**Opção B – Via linha de comando na VPS:**
+
+```bash
+# Clone o projeto na VPS
+git clone https://github.com/angeloalves88/austa_gameficacao_app.git
+cd austa_gameficacao_app
+
+# Configure o domínio
+cp .env.example .env
+nano .env   # defina APP_DOMAIN=seu-dominio.com
+
+# Suba (a rede traefik já existe se o Traefik está rodando)
+docker compose up -d --build
+```
+
+### Rede do Traefik
+
+Se a rede do seu Traefik tiver outro nome (ex: `traefik_default`), altere no `docker-compose.yml`:
+
+```yaml
+networks:
+  traefik:
+    external: true
+# Troque "traefik" pelo nome da rede do seu Traefik
+```
+
+### Verificar
+
+- Acesse `http://APP_DOMAIN` (ou `https://` se tiver TLS no Traefik)
+- Se usar apenas IP: defina `APP_DOMAIN=ipdavps` e confira as entradas do Traefik (entrypoints)

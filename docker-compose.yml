@@ -1,0 +1,23 @@
+services:
+  score-saude:
+    build: .
+    container_name: score-saude
+    restart: unless-stopped
+    labels:
+      # Ativa o Traefik para este container
+      - "traefik.enable=true"
+      # Rota HTTP - ajuste APP_DOMAIN no .env
+      - "traefik.http.routers.score-saude.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.score-saude.entrypoints=web"
+      # Rota HTTPS (se o Traefik tiver TLS configurado)
+      - "traefik.http.routers.score-saude-secure.rule=Host(`${APP_DOMAIN}`)"
+      - "traefik.http.routers.score-saude-secure.entrypoints=websecure"
+      - "traefik.http.routers.score-saude-secure.tls=true"
+      # Service
+      - "traefik.http.services.score-saude.loadbalancer.server.port=80"
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
