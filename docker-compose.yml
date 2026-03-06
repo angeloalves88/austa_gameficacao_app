@@ -6,13 +6,15 @@ services:
     labels:
       # Ativa o Traefik para este container
       - "traefik.enable=true"
-      # Rota HTTP - ajuste APP_DOMAIN no .env
+      # Rota HTTP - prioridade alta para evitar 404 de outros routers
       - "traefik.http.routers.score-saude.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.routers.score-saude.entrypoints=web"
+      - "traefik.http.routers.score-saude.priority=100"
       # Rota HTTPS (se o Traefik tiver TLS configurado)
       - "traefik.http.routers.score-saude-secure.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.routers.score-saude-secure.entrypoints=websecure"
       - "traefik.http.routers.score-saude-secure.tls=true"
+      - "traefik.http.routers.score-saude-secure.priority=100"
       # Service
       - "traefik.http.services.score-saude.loadbalancer.server.port=80"
     networks:
